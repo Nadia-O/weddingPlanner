@@ -1,0 +1,43 @@
+@model Wedding
+
+<h1 class="display-4">@Model.WedderOne & @Model.WedderTwo's Wedding</h1>
+<h3>Planner: @Model.Planner.FirstName @Model.Planner.LastName</h3>
+<h3>Date: @Model.Date.ToLongDateString()</h3>
+<h3>Time: @Model.Date.ToShortTimeString()</h3>
+<br>
+
+<div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
+</div>
+@* try Google Maps API here *@
+<br>
+
+<div>
+    <h4>Guests:</h4>
+    @foreach(var r in @Model.GuestList)
+    {
+        <p>@r.Guest.FirstName @r.Guest.LastName</p>
+
+    }
+<br> 
+        @if(ViewBag.User.UserId == @Model.Planner.UserId)
+        {
+            <a asp-action="DeleteWedding" asp-controller="Wedding" asp-route-weddingId="@Model.WeddingId" class="btn btn-outline-success">Delete</a>
+        }
+        else
+        {
+            @if(@Model.GuestList.All(r=>r.UserId != ViewBag.User.UserId))
+            {
+                <a asp-action="Rsvp" asp-controller="Wedding" asp-route-weddingId="@Model.WeddingId" asp-route-userId="@ViewBag.User.UserId" asp-route-status="RSVP" class="btn btn-outline-success">RSVP</a>
+                }
+                    @if(Model.GuestList.Any(r=>r.UserId == ViewBag.User.UserId))
+                    {
+                        <a asp-action="Rsvp" asp-controller="Wedding" asp-route-weddingId="@Model.WeddingId" asp-route-userId="@ViewBag.User.UserId" asp-route-status="Un-RSVP" class="btn btn-outline-success">Un-RSVP</a>
+                    }
+        } 
+
+</div>
+<br><br>
+
+<a asp-action="Index" asp-controller="Wedding">Back to Dashboard</a><br>
+<a asp-action="Logout" asp-controller="Wedding">Logout</a>

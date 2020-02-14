@@ -1,0 +1,62 @@
+@model List<Wedding>;
+
+<div class="row justify-content-around">
+<div class="col-5, text-center">
+    <h1 class="display-4">Welcome to Wedding Planner, @ViewBag.User.FirstName!</h1>
+    <br><br>
+</div>
+
+    <table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Wedding</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Guests</th>
+            <th scope="col">Actions</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var w in @Model)
+        {
+            @if(w.Date > DateTime.Now){
+            <tr>
+                <td scope="row"> 
+                    <a asp-action="ShowWedding" asp-route-weddingId="@w.WeddingId" asp-controller="Wedding">@w.WedderOne @w.WedderTwo</a>
+                </td>
+                <td>@w.Date.ToLongDateString()</td>
+                <td>@w.Date.ToShortTimeString()</td>
+                <td>@w.GuestList.Count</td>
+                <td>
+                    @if(ViewBag.User.UserId == w.Planner.UserId)
+                    {
+                        <a asp-action="DeleteWedding" asp-controller="Wedding" asp-route-weddingId="@w.WeddingId">Delete</a>
+                    }
+                    else
+                    {
+                        @if(w.GuestList.All(r=>r.UserId != ViewBag.User.UserId))
+                        {
+                            <a asp-action="Rsvp" asp-controller="Wedding" asp-route-weddingId="@w.WeddingId" asp-route-userId="@ViewBag.User.UserId" asp-route-status="RSVP">RSVP</a>
+                        }
+                        @if(w.GuestList.Any(r=>r.UserId == ViewBag.User.UserId))
+                        {
+                            <a asp-action="Rsvp" asp-controller="Wedding" asp-route-weddingId="@w.WeddingId" asp-route-userId="@ViewBag.User.UserId" asp-route-status="Un-RSVP">Un-RSVP</a>
+                        }
+                    }
+                </td>    
+            </tr>
+            }
+        }
+    </tbody>
+</table><br>
+
+<div class="col-5, text-center">
+    <a asp-action="NewWedding" asp-controller="Wedding" class="btn btn-outline-success" >Add Wedding</a>
+    <br><br>
+    <a asp-action="Logout" asp-controller="Wedding">Logout</a>
+</div>
+</div>
+
+
+
